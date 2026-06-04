@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FastAPI CRUD Productos</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="page-container">
+      <header class="hero">
+        <div>
+          <span class="eyebrow">Proyecto de ejemplo</span>
+          <h1>CRUD de Productos con FastAPI y MongoDB</h1>
+          <p>
+            Página inicial para comenzar a trabajar con el CRUD de productos.
+            Usa los enlaces para listar, crear y documentar tu API.
+          </p>
+          <div class="button-group">
+            <a class="button primary" href="/productos">Ver productos</a>
+            <a class="button secondary" href="/docs">Ver documentación</a>
+          </div>
+        </div>
+        {% include "modelo_producto.html" %}
+      </header>
+
+      <section class="features">
+        <article>
+          <h3>Ruta principal</h3>
+          <p>Esta página sirve como punto de partida para tu aplicación.</p>
+        </article>
+        <article>
+          <h3>CRUD de productos</h3>
+          <p>
+            Usa <code>/productos</code> para listar, crear, actualizar y eliminar.
+          </p>
+        </article>
+        <article>
+          <h3>Documentación automática</h3>
+          <p>
+            Abre <code>/docs</code> para probar los endpoints desde el navegador.
+          </p>
+        </article>
+      </section>
+
+      <section class="interactive-section">
+        <div class="interactive-grid">
+          {% include "crear_producto.html" %}
+          {% include "producto_existentes.html" %}
+        </div>
+      </section>
+    </div>
+
+    {% include "editar_producto.html" %}
+  </body>
+</html>

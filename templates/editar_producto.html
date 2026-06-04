@@ -1,0 +1,189 @@
+<script>
+  let editingId = null;
+
+  async function cargarProductos() {
+    const list = document.getElementById('producto-list');
+    const filtro = document.getElementById('filtro-producto').value.toLowerCase().trim();
+    list.innerHTML = '<p class="placeholder">Cargando productos...</p>';
+
+    try {
+      const response = await fetch('/productos');
+      let productos = await response.json();
+
+      if (!Array.isArray(productos) || productos.length === 0) {
+        list.innerHTML = '<p class="placeholder">No hay productos aún.</p>';
+        return;
+      }
+
+      if (filtro) {
+        productos = productos.filter((producto) => {
+          return (
+            producto.titulo.toLowerCase().includes(filtro) ||
+            producto.categoria.toLowerCase().includes(filtro)
+          );
+        });
+      }
+
+      if (productos.length === 0) {
+        list.innerHTML = '<p class="placeholder">No se encontraron productos.</p>';
+        return;
+      }
+
+      list.innerHTML = productos
+        .map((producto) => `
+          <div class="producto-card">
+            <div class="producto-card-header">
+              <div>
+                <h3>${producto.titulo}</h3>
+                <p class="muted">${producto.categoria}</p>
+              </div>
+              <div class="producto-actions">
+                <button class="button tertiary" data-action="edit" data-id="${producto.id}">Editar</button>
+                <button class="button danger" data-action="delete" data-id="${producto.id}">Eliminar</button>
+              </div>
+            </div>
+            <div class="producto-meta">$${producto.precio.toFixed(2)}</div>
+            <p>${producto.descripcion}</p>
+          </div>
+        `)
+        .join('');
+
+      document.querySelectorAll('.producto-card .button').forEach((button) => {
+        button.addEventListener('click', handleProductAction);
+      });
+    } catch (error) {
+      list.innerHTML = '<p class="placeholder">No se pudieron cargar los productos.</p>';
+      console.error(error);
+    }
+  }
+
+  function handleProductAction(event) {
+    const button = event.currentTarget;
+    const action = button.dataset.action;
+    const productoId = button.dataset.id;
+
+    if (action === 'edit') {
+      editarProducto(productoId);
+    }
+
+    if (action === 'delete') {
+      eliminarProducto(productoId);
+    }
+  }
+
+  async function editarProducto(productoId) {
+    try {
+      const response = await fetch(`/productos/${productoId}`);
+      const producto = await response.json();
+
+      if (response.ok) {
+        editingId = productoId;
+        document.getElementById('form-title').textContent = 'Editar producto';
+        document.getElementById('submit-button').textContent = 'Guardar cambios';
+        document.getElementById('cancel-button').style.display = 'inline-flex';
+        document.getElementById('producto-id').value = producto.id;
+        document.getElementById('titulo').value = producto.titulo;
+        document.getElementById('categoria').value = producto.categoria;
+        document.getElementById('precio').value = producto.precio;
+        document.getElementById('descripcion').value = producto.descripcion;
+      } else {
+        const errorData = await response.json();
+        mostrarMensaje(errorData.detail || 'Error al cargar el producto.', 'error');
+      }
+    } catch (error) {
+      mostrarMensaje('Error de conexión con el servidor.', 'error');
+      console.error(error);
+    }
+  }
+
+  async function eliminarProducto(productoId) {
+    if (!confirm('¿Estás seguro de eliminar este producto?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/productos/${productoId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        mostrarMensaje('Producto eliminado correctamente.', 'success');
+        if (editingId === productoId) {
+          resetForm();
+        }
+        cargarProductos();
+      } else {
+        const errorData = await response.json();
+        mostrarMensaje(errorData.detail || 'Error al eliminar el producto.', 'error');
+      }
+    } catch (error) {
+      mostrarMensaje('Error de conexión con el servidor.', 'error');
+      console.error(error);
+    }
+  }
+
+  async function enviarFormulario(event) {
+    event.preventDefault();
+    const productoId = editingId;
+    const message = document.getElementById('form-message');
+    message.textContent = '';
+
+    const data = {
+      titulo: document.getElementById('titulo').value,
+      categoria: document.getElementById('categoria').value,
+      precio: parseFloat(document.getElementById('precio').value),
+      descripcion: document.getElementById('descripcion').value,
+    };
+
+    try {
+      const url = productoId ? `/productos/${productoId}` : '/productos';
+      const method = productoId ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        mostrarMensaje(errorData.detail || 'Error al guardar el producto.', 'error');
+        return;
+      }
+
+      mostrarMensaje(productoId ? 'Producto actualizado correctamente.' : 'Producto creado correctamente.', 'success');
+      resetForm();
+      cargarProductos();
+    } catch (error) {
+      mostrarMensaje('Error de conexión con el servidor.', 'error');
+      console.error(error);
+    }
+  }
+
+  function resetForm() {
+    editingId = null;
+    document.getElementById('form-title').textContent = 'Crear nuevo producto';
+    document.getElementById('submit-button').textContent = 'Crear producto';
+    document.getElementById('cancel-button').style.display = 'none';
+    document.getElementById('producto-id').value = '';
+    document.getElementById('titulo').value = '';
+    document.getElementById('categoria').value = '';
+    document.getElementById('precio').value = '';
+    document.getElementById('descripcion').value = '';
+    document.getElementById('form-message').textContent = '';
+  }
+
+  function mostrarMensaje(texto, tipo) {
+    const message = document.getElementById('form-message');
+    message.textContent = texto;
+    message.className = `form-message ${tipo}`;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarProductos();
+    document.getElementById('producto-form').addEventListener('submit', enviarFormulario);
+    document.getElementById('refresh-button').addEventListener('click', cargarProductos);
+    document.getElementById('filtro-producto').addEventListener('input', cargarProductos);
+    document.getElementById('cancel-button').addEventListener('click', resetForm);
+  });
+</script>

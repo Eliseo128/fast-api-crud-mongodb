@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-python"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Producto {
+  id          String   @id @map("_id") @default(auto()) @db.ObjectId
+  titulo      String
+  categoria   String
+  precio      Float
+  descripcion String
+}
