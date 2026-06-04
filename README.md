@@ -2,48 +2,7 @@
 fastapi mongodb
 Revisando la estructura del proyecto y los archivos existentes.
 
-Read [](file:///workspaces/fast-api-crud-mongodb)
 
-Read [](file:///workspaces/fast-api-crud-mongodb/README.md)
-
-Creando la estructura principal de archivos y la configuración de Prisma.
-
-Created [](file:///workspaces/fast-api-crud-mongodb/main.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/config/prisma_config.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/prisma/esquema_prisma.prisma)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/rutas/rutas_producto.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/esquema/producto_esquema.py)
-
-Faltan los servicios, los archivos de configuración y los archivos de metadatos. Ahora los creo.
-
-Created [](file:///workspaces/fast-api-crud-mongodb/servicios/producto_servicio.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/.env)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/.gitignore)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/requerimientos.txt)
-
-Queda crear los paquetes de Python y la guía de uso paso a paso.
-
-Created [](file:///workspaces/fast-api-crud-mongodb/config/__init__.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/prisma/__init__.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/rutas/__init__.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/esquema/__init__.py)
-
-Created [](file:///workspaces/fast-api-crud-mongodb/servicios/__init__.py)
-
-Replacing 3 lines with 83 lines in [](file:///workspaces/fast-api-crud-mongodb/README.md)
-
-
-```
 
 ```
 Verificando la sintaxis de los archivos Python recién creados.
